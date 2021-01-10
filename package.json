@@ -1,6 +1,6 @@
 {
   "name": "casparcg-timedisplay",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CasparCG Time Display",
   "main": "main.js",
   "scripts": {
@@ -11,7 +11,9 @@
   "author": "Yannick Hilber",
   "devDependencies": {
     "electron": "^11.1.1",
-    "electron-builder": "^22.9.1",
+    "electron-builder": "^22.9.1"
+  },
+  "dependencies": {
     "electron-updater": "^4.3.5"
   },
   "build": {
@@ -23,7 +25,9 @@
     "win": {
       "target": "nsis",
       "icon": "build/icon.ico",
-      "publish": ["github"]
+      "publish": [
+        "github"
+      ]
     }
   },
   "publish": "onTagOrDraft"
