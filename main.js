@@ -41,7 +41,9 @@ app.whenReady().then(() => {
     if (!isDev) autoUpdater.checkForUpdates()
 
     var server = new CCGServer(globalSettings);
-    server.start();
+    server.start((timecodeVars) => {
+        console.log(timecodeVars);
+    });
 })
 
 app.on('window-all-closed', function () {

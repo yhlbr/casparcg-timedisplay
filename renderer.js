@@ -4,3 +4,12 @@
 // `nodeIntegration` is turned off. Use `preload.js` to
 // selectively enable features needed in the rendering
 // process.
+
+function $(el) {
+    return document.querySelector(el);
+}
+setInterval(() => {
+    var curDate = new Date();
+    var curTime = curDate.toLocaleTimeString();
+    $('.time.time-now').innerText = curTime;
+}, 300);

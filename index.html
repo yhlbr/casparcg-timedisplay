@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>CasparCG Time-Display</title>
     <link rel="stylesheet" href="./styles.css">
-  </head>
-  <body>
-    <h1>Hello World Release v1.0.2!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
+</head>
 
-    <!-- You can also require other files to run in this process -->
+<body>
+    <div class="container">
+        <div class="time time-now">00:00:00</div>
+        <div class="time time-clip">00:00:00</div>
+        <div class="time time-show">00:00:00</div>
+    </div>
     <script src="./renderer.js"></script>
-  </body>
+</body>
+
 </html>
