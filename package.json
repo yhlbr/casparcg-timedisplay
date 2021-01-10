@@ -14,7 +14,11 @@
     "electron-builder": "^22.9.1"
   },
   "dependencies": {
-    "electron-updater": "^4.3.5"
+    "casparcg-connection": "^5.1.0",
+    "dgram": "^1.0.1",
+    "electron-updater": "^4.3.5",
+    "osc-min": "^1.1.2",
+    "tslib": "^2.1.0"
   },
   "build": {
     "appId": "com.yannickh.electron-timedisplay",
