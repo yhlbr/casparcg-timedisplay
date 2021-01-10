@@ -3,16 +3,17 @@
 const { CasparCG } = require("casparcg-connection");
 
 // OSC
-const oscClient = require('osc-min');
-const udpConnection = require("dgram");
+const osc = require('osc');
 
 module.exports = class CCGServer {
     // SAVED CONNECTIONS
     CasparCG_Connection = null;
+    osc = null;
+    callbackFunction = null;
 
     // VARIABLES
     timecodeVars = {
-        videoPresent: null,
+        videoPresent: false,
         currentTime: 0,
         currentTimeConverted: '00:00:00:00',
         currentDuration: 0,
@@ -29,7 +30,10 @@ module.exports = class CCGServer {
         this.config = config;
     }
 
-    start() {
+    start(callbackFn = null) {
+        if (callbackFn) {
+            this.callbackFunction = callbackFn;
+        }
         // Start CCG Connector
         this.ccgConnector((err) => {
             if (!err) {
@@ -68,76 +72,59 @@ module.exports = class CCGServer {
 
     // OSC Client
     ccgConnectOSC() {
-        var oscSocket = udpConnection.createSocket("udp4", function (msg, info) {
-            var error, error1;
-            try {
-
-                // CASPARCG - GET OSC
-                oscMessages = oscClient.fromBuffer(msg);
-                oscMessages.elements.forEach(function (oscMessage) {
-
-                    // CHECK IF VIDEO PRODUCER IS PRESENT
-                    if (oscMessage.address == '/channel/' + this.config.CasparCG.ccgChannel + '/stage/layer/' + this.config.CasparCG.ccgLayer_video_01 + '/foreground/producer') {
-                        var videoPresent = false;
-                        if (oscMessage.args[0].value != 'empty') {
-                            videoPresent = true;
-                        }
-                        else {
-                            videoPresent = false;
-                        }
-
-                        // CHECK IF VIDEO STATUS HAS CHANGED
-                        if (videoPresent != timecodeVars.videoPresent) {
-                            timecodeVars.videoPresent = videoPresent;
-                        }
-                    }
-
-                    // GET TIMING
-                    if (oscMessage.address == '/channel/' + this.config.CasparCG.ccgChannel + '/stage/layer/' + this.config.CasparCG.ccgLayer_video_01 + '/foreground/file/time') {
-                        var currentTime = Number(oscMessage.args[0].value.toFixed(3));
-                        var currentDuration = Number(oscMessage.args[1].value.toFixed(3));
-
-                        // CHECK IF TIME HAS CHANGED
-                        if (currentTime != timecodeVars.currentTime || currentDuration != timecodeVars.currentDuration) {
-                            this.calculateTime(currentTime, currentDuration);
-                        }
-                    }
-                });
-
-                // CASPARCG - CATCH ERROR
-            } catch (error1) {
-                error = error1;
-            }
+        // Create an osc.js UDP Port listening on port 57121.
+        var server = this.osc = new osc.UDPPort({
+            localAddress: "0.0.0.0",
+            localPort: this.config.CasparCG.port_OSC,
+            metadata: true
         });
 
-        // SOCKET.IO - BIND CONNECTION
-        oscSocket.bind(this.config.CasparCG.port_OSC);
+        // Listen for incoming OSC messages.
+        server.on("message", (oscMsg) => {
+            this.handleOscMessage(oscMsg);
+        });
+
+        // Open the socket.
+        server.open();
+    }
+
+    handleOscMessage(oscMsg) {
+        if (oscMsg.address == '/channel/' + this.config.CasparCG.ccgChannel + '/stage/layer/' + this.config.CasparCG.ccgLayer_video_01 + '/file/time') {
+            var currentTime = Number(oscMsg.args[0].value.toFixed(3));
+            var currentDuration = Number(oscMsg.args[1].value.toFixed(3));
+
+            // CHECK IF TIME HAS CHANGED
+            if (currentTime != this.timecodeVars.currentTime || currentDuration != this.timecodeVars.currentDuration) {
+                this.calculateTime(currentTime, currentDuration);
+            }
+        }
     }
 
     // Calculate Multiple Timings
     calculateTime(currentTime, currentDuration) {
 
         // Raw Time
-        timecodeVars.currentTime = currentTime;
-        timecodeVars.currentDuration = currentDuration;
+        this.timecodeVars.currentTime = currentTime;
+        this.timecodeVars.currentDuration = currentDuration;
 
         // Time To TC
-        timecodeVars.currentTimeConverted = msToTime(currentTime * 1000);
-        timecodeVars.currentDurationConverted = msToTime(currentDuration * 1000);
+        this.timecodeVars.currentTimeConverted = this.msToTime(currentTime * 1000);
+        this.timecodeVars.currentDurationConverted = this.msToTime(currentDuration * 1000);
 
         // Calculate Countdown
-        timecodeVars.currentCountDown = currentDuration - currentTime;
-        timecodeVars.currentCountDown = timecodeVars.currentCountDown.toFixed(3);
-        timecodeVars.currentCountDownConverted = msToTime(timecodeVars.currentCountDown * 1000);
+        this.timecodeVars.currentCountDown = currentDuration - currentTime;
+        this.timecodeVars.currentCountDown = this.timecodeVars.currentCountDown.toFixed(3);
+        this.timecodeVars.currentCountDownConverted = this.msToTime(this.timecodeVars.currentCountDown * 1000);
 
         // Calculate Progress
-        timecodeVars.currentProgressPrecent = ((currentTime / currentDuration) * 100).toFixed(1);
-        console.log(timecodeVars);
+        this.timecodeVars.currentProgressPrecent = ((currentTime / currentDuration) * 100).toFixed(1);
+        if (typeof this.callbackFunction == 'function')
+            this.callbackFunction(this.timecodeVars);
     }
 
     // MS to TC converter
     msToTime(duration) {
-        var frames = parseInt((duration % 1000) / msPerFrame)
+        var frames = parseInt((duration % 1000) / this.msPerFrame)
             , seconds = parseInt((duration / 1000) % 60)
             , minutes = parseInt((duration / (1000 * 60)) % 60)
             , hours = parseInt((duration / (1000 * 60 * 60)) % 24);

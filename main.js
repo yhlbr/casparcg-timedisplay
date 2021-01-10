@@ -1,13 +1,14 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
 const { autoUpdater } = require("electron-updater")
+const CCGServer = require('./CCGServer');
+const isDev = process.env.APP_DEV ? (process.env.APP_DEV.trim() == "true") : false;
 
-var CCGServer = require('./CCGServer');
 
 // GLOBAL SETTINGS
 var globalSettings = {
     CasparCG: {
-        server: "localhost",
+        server: "192.168.1.141",
         port_AMCP: 5250,
         port_OSC: 6250,
         ccgChannel: 1,
@@ -19,7 +20,8 @@ function createWindow() {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true
         }
     })
 
@@ -36,11 +38,10 @@ app.whenReady().then(() => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
     })
 
-    autoUpdater.checkForUpdates()
+    if (!isDev) autoUpdater.checkForUpdates()
 
     var server = new CCGServer(globalSettings);
     server.start();
-    console.log("SERVER STARTED");
 })
 
 app.on('window-all-closed', function () {

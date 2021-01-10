@@ -4,7 +4,7 @@
   "description": "CasparCG Time Display",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "APP_DEV=true electron .",
     "dist": "electron-builder",
     "release": "build"
   },
@@ -15,9 +15,9 @@
   },
   "dependencies": {
     "casparcg-connection": "^5.1.0",
-    "dgram": "^1.0.1",
+    "electron-store": "^6.0.1",
     "electron-updater": "^4.3.5",
-    "osc-min": "^1.1.2",
+    "osc": "^2.4.1",
     "tslib": "^2.1.0"
   },
   "build": {
