@@ -34,6 +34,12 @@
       "publish": [
         "github"
       ]
+    },
+    "linux": {
+        "target": "AppImage",
+        "icon": "build/icon.ico",
+        "synopsis": "CasparCG Time Display",
+        "category": "Utility"
     }
   },
   "publish": "onTagOrDraft"
