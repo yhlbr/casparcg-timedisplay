@@ -42,6 +42,17 @@ module.exports = class CCGServer {
         });
     }
 
+    stop() {
+        if (this.osc) {
+            this.osc.close();
+            this.osc = null;
+        }
+        if(this.CasparCG_Connection) {
+            this.CasparCG_Connection.disconnect();
+            this.CasparCG_Connection = null;
+        }
+    } 
+
     // CCG CONNECTOR
     ccgConnector(callback) {
 
@@ -60,7 +71,7 @@ module.exports = class CCGServer {
                     }
                     if (ccgConnectionChanged === false) {
                         callback('disconnected');
-                        CasparCG_Connection = null;
+                        this.CasparCG_Connection = null;
                     }
                 }
             });
@@ -89,7 +100,7 @@ module.exports = class CCGServer {
     }
 
     handleOscMessage(oscMsg) {
-        if (oscMsg.address == '/channel/' + this.config.CasparCG.ccgChannel + '/stage/layer/' + this.config.CasparCG.ccgLayer_video_01 + '/file/time') {
+        if (oscMsg.address == '/channel/' + this.config.CasparCG.ccgChannel + '/stage/layer/' + this.config.CasparCG.ccgLayer + '/file/time') {
             var currentTime = Number(oscMsg.args[0].value.toFixed(3));
             var currentDuration = Number(oscMsg.args[1].value.toFixed(3));
 

@@ -13,3 +13,7 @@ setInterval(() => {
     var curTime = curDate.toLocaleTimeString();
     $('.time.time-now').innerText = curTime;
 }, 300);
+
+$('.settings').addEventListener('click', () => {
+    $('.settings-container').style.display = $('.settings-container').style.display == 'block' ? 'none' : 'block';
+});

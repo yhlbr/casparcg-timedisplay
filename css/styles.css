@@ -1,0 +1,87 @@
+@font-face {
+    font-family: 'alarm-clock';
+    src:url('../fonts/alarm-clock.ttf.woff') format('woff'),
+        url('../fonts/alarm-clock.ttf.svg#alarm-clock') format('svg'),
+        url('../fonts/alarm-clock.ttf.eot'),
+        url('../fonts/alarm-clock.ttf.eot?#iefix') format('embedded-opentype'); 
+    font-weight: normal;
+    font-style: normal;
+}
+
+html, body {
+    background-color: black;
+    padding: 0;
+    margin: 0;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    align-content: space-evenly;
+    overflow: hidden;
+}
+
+.time {
+    font-size: calc(10vw + 10vh);
+    font-family: alarm-clock, sans-serif;
+    text-align: center;
+    color: white;
+}
+
+.time-clip {
+    color: rgb(0, 255, 0);
+    font-size: calc(16vw + 2vh);
+}
+
+.time-now {
+    color: rgb(255, 0, 0);
+}
+
+.progressbar {
+    height: 1vh;
+    width: 0;
+    background-color: rgb(0, 255, 0);
+}
+
+.settings {
+    position: absolute;
+    top: 1vh;
+    right: 1vw;
+    font-size: calc(2vh + 2vw);
+    color: #222;
+    cursor: pointer;
+    z-index: 11;
+}
+
+.settings-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    background-color: #333;
+    z-index: 10;
+}
+
+.form-row {
+    margin: 30px;
+}
+
+label {
+    font-family: sans-serif;
+    display: block;
+    color: white;
+    margin-bottom: 5px;
+}
+button {
+    margin-left: 30px;
+}
+
+#message {
+    color: white;
+    font-family: sans-serif;
+    margin-left: 30px;
+    margin-top: 10px;
+}

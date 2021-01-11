@@ -7,14 +7,43 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>CasparCG Time-Display</title>
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/fontawesome/css/all.min.css">
 </head>
 
 <body>
+    <i class="settings fas fa-cog"></i>
     <div class="container">
         <div class="time time-now">00:00:00</div>
-        <div class="time time-clip">00:00:00</div>
+        <div class="time">
+            <div class="time-clip">00:00:00:00</div>
+            <div class="progressbar"></div>
+        </div>
         <div class="time time-show">00:00:00</div>
+    </div>
+    <div class="settings-container">
+        <div class="form-row">
+            <label for="server">Server</label>
+            <input type="text" id="server">
+        </div>
+        <div class="form-row">
+            <label for="server">AMCP Port</label>
+            <input type="text" id="port_AMCP">
+        </div>
+        <div class="form-row">
+            <label for="server">OSC Port</label>
+            <input type="text" id="port_OSC">
+        </div>
+        <div class="form-row">
+            <label for="server">CasparCG Channel</label>
+            <input type="text" id="ccgChannel">
+        </div>
+        <div class="form-row">
+            <label for="server">CasparCG Layer</label>
+            <input type="text" id="ccgLayer">
+        </div>
+        <button type="button" id="save">Speichern</button>
+        <p id="message"></p>
     </div>
     <script src="./renderer.js"></script>
 </body>
