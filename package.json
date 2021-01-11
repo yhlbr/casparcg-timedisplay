@@ -37,7 +37,7 @@
     },
     "linux": {
         "target": "AppImage",
-        "icon": "build/icon.ico",
+        "icon": "build/icon.png",
         "synopsis": "CasparCG Time Display",
         "category": "Utility"
     }
