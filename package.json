@@ -1,49 +1,53 @@
 {
-  "name": "casparcg-timedisplay",
-  "version": "1.0.6",
-  "description": "CasparCG Time Display",
-  "main": "main.js",
-  "scripts": {
-    "start": "APP_DEV=true electron .",
-    "dist": "electron-builder",
-    "release": "build"
-  },
-  "author": "Yannick Hilber",
-  "devDependencies": {
-    "electron": "^11.1.1",
-    "electron-builder": "^22.9.1"
-  },
-  "dependencies": {
-    "body-parser": "^1.19.0",
-    "casparcg-connection": "^5.1.0",
-    "electron-store": "^6.0.1",
-    "electron-updater": "^4.3.5",
-    "express": "^4.17.1",
-    "osc": "^2.4.1",
-    "tslib": "^2.1.0"
-  },
-  "build": {
-    "appId": "com.yannickh.electron-timedisplay",
-    "productName": "CasparCG Time-Display",
-    "mac": {
-      "category": "public.app-category.utilities"
+    "name": "casparcg-timedisplay",
+    "version": "1.0.7",
+    "description": "CasparCG Time Display",
+    "main": "main.js",
+    "scripts": {
+        "start": "APP_DEV=true electron .",
+        "dist": "electron-builder",
+        "release": "build"
     },
-    "win": {
-      "target": "nsis",
-      "icon": "build/icon.ico",
-      "publish": [
-        "github"
-      ]
+    "author": "Yannick Hilber",
+    "devDependencies": {
+        "electron": "^11.1.1",
+        "electron-builder": "^22.9.1"
     },
-    "linux": {
-        "target": "AppImage",
-        "icon": "build/icon.png",
-        "synopsis": "CasparCG Time Display",
-        "category": "Utility",
-        "arch": [
-            "armv7l"
-        ]
-    }
-  },
-  "publish": "onTagOrDraft"
+    "dependencies": {
+        "body-parser": "^1.19.0",
+        "casparcg-connection": "^5.1.0",
+        "electron-store": "^6.0.1",
+        "electron-updater": "^4.3.5",
+        "express": "^4.17.1",
+        "osc": "^2.4.1",
+        "tslib": "^2.1.0"
+    },
+    "build": {
+        "appId": "com.yannickh.electron-timedisplay",
+        "productName": "CasparCG Time-Display",
+        "mac": {
+            "category": "public.app-category.utilities"
+        },
+        "win": {
+            "target": "nsis",
+            "icon": "build/icon.ico",
+            "publish": [
+                "github"
+            ]
+        },
+        "linux": {
+            "target": [
+                {
+                    "target": "AppImage",
+                    "arch": [
+                        "armv7l"
+                    ]
+                }
+            ],
+            "icon": "build/icon.png",
+            "synopsis": "CasparCG Time Display",
+            "category": "Utility"
+        }
+    },
+    "publish": "onTagOrDraft"
 }
