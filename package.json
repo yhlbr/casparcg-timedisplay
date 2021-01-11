@@ -1,6 +1,6 @@
 {
   "name": "casparcg-timedisplay",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "CasparCG Time Display",
   "main": "main.js",
   "scripts": {
@@ -39,7 +39,10 @@
         "target": "AppImage",
         "icon": "build/icon.png",
         "synopsis": "CasparCG Time Display",
-        "category": "Utility"
+        "category": "Utility",
+        "arch": [
+            "armv7l"
+        ]
     }
   },
   "publish": "onTagOrDraft"
