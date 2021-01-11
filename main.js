@@ -4,6 +4,7 @@ const { autoUpdater } = require("electron-updater")
 const Store = require('electron-store');
 const store = new Store();
 const CCGServer = require('./CCGServer');
+const WebServer = require('./WebServer');
 const isDev = process.env.APP_DEV ? (process.env.APP_DEV.trim() == "true") : false;
 
 var mainWindow = null;
@@ -24,7 +25,12 @@ ipcMain.on('get-settings', (event) => {
     event.returnValue = settings;
 });
 ipcMain.on('save-settings', (event, arg) => {
-    settings = arg;
+    updateSettings(arg);
+    event.returnValue = true;
+});
+
+function updateSettings(newSettings) {
+    settings = newSettings;
     if (server) {
         server.stop();
         server.config = settings;
@@ -49,8 +55,7 @@ ipcMain.on('save-settings', (event, arg) => {
                 break;
         }
     });
-    event.returnValue = true;
-});
+}
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -60,7 +65,7 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true
         },
-        fullscreen: true
+        fullscreen: !isDev
     })
     if (!isDev) mainWindow.setMenuBarVisibility(false)
 
@@ -84,6 +89,14 @@ app.whenReady().then(() => {
             mainWindow.send('timecodeVars', timecodeVars);
         }
     });
+
+    const webServer = new WebServer();
+    webServer.start();
+    webServer.registerIpc(mainWindow);
+    webServer.registerSettingsFunction(() => { return settings; });
+    webServer.registerNewSettingsCallback((newSettings) => {
+        updateSettings(newSettings);
+    })
 })
 
 app.on('window-all-closed', function () {

@@ -1,16 +1,19 @@
-String.prototype.toHHMMSS = function () {
-    var sec_num = parseInt(this, 10); // don't forget the second param
-    console.log(sec_num);
+String.prototype.toHHMMSS = function (with_millis = false) {
+    var sec_num = parseInt(this, 10);
     var hours = Math.floor(sec_num / 3600);
     var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
     var seconds = sec_num - (hours * 3600) - (minutes * 60);
-    var millis = (parseFloat(this) - sec_num).toFixed(2).substr(2);
+    if (with_millis)
+        var millis = (parseFloat(this) - sec_num).toFixed(2).substr(2);
 
     if (hours < 10) { hours = "0" + hours; }
     if (minutes < 10) { minutes = "0" + minutes; }
     if (seconds < 10) { seconds = "0" + seconds; }
-    return hours + ':' + minutes + ':' + seconds + ':' + millis;
+    return hours + ':' + minutes + ':' + seconds + (with_millis ? ':' + millis : '');
 }
+
+var show_starttime = null;
+var show_timeinterval = null;
 
 window.addEventListener('DOMContentLoaded', () => {
     // renderer process
@@ -28,17 +31,16 @@ window.addEventListener('DOMContentLoaded', () => {
     reloadSettings();
 
     document.getElementById('save').addEventListener('click', () => {
-        console.log("clicked");
         saveInputs();
     });
-})
 
+    registerApiCallbacks(ipcRenderer);
+});
 
 function updateScreen(progressPercent, countDownSeconds) {
     document.querySelector('.progressbar').style.width = progressPercent + '%';
-    document.querySelector('.time-clip').innerText = countDownSeconds.toHHMMSS();
+    document.querySelector('.time-clip').innerText = countDownSeconds.toHHMMSS(true);
 }
-
 
 function reloadSettings() {
     var settings = getSettings();
@@ -65,4 +67,28 @@ function saveInputs() {
             document.getElementById('message').innerText = "";
         }, 2000);
     }
+}
+
+function registerApiCallbacks(ipcRenderer) {
+    ipcRenderer.on('show-start', () => {
+        // Can't start if already started
+        if (show_timeinterval != null) return;
+
+        show_starttime = Date.now();
+        show_timeinterval = setInterval(() => {
+            updateShowTime();
+        }, 100);
+    });
+    ipcRenderer.on('show-stop', () => {
+        if (show_timeinterval != null) {
+            clearInterval(show_timeinterval);
+            show_starttime = null;
+            show_timeinterval = null;
+        }
+    });
+}
+
+function updateShowTime() {
+    elapsedTime = (Date.now() - show_starttime) / 1000;
+    document.querySelector('.time-show').innerText = elapsedTime.toString().toHHMMSS();
 }

@@ -14,9 +14,11 @@
     "electron-builder": "^22.9.1"
   },
   "dependencies": {
+    "body-parser": "^1.19.0",
     "casparcg-connection": "^5.1.0",
     "electron-store": "^6.0.1",
     "electron-updater": "^4.3.5",
+    "express": "^4.17.1",
     "osc": "^2.4.1",
     "tslib": "^2.1.0"
   },

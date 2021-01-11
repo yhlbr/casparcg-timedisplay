@@ -1,0 +1,17 @@
+.form-row {
+    margin: 20px;
+}
+
+label {
+    font-family: sans-serif;
+    display: block;
+    margin-bottom: 5px;
+}
+button {
+    margin-left: 20px;
+}
+
+p {
+    font-family: sans-serif;
+    margin-left: 20px;
+}

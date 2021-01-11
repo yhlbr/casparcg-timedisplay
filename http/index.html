@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CasparCG Time-Display</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+    <form action="/settings/save" method="POST">
+        <div class="form-row">
+            <label for="server">Server</label>
+            <input type="text" name="server" id="server">
+        </div>
+        <div class="form-row">
+            <label for="server">AMCP Port</label>
+            <input type="text" name="port_AMCP" id="port_AMCP">
+        </div>
+        <div class="form-row">
+            <label for="server">OSC Port</label>
+            <input type="text" name="port_OSC" id="port_OSC">
+        </div>
+        <div class="form-row">
+            <label for="server">CasparCG Channel</label>
+            <input type="text" name="ccgChannel" id="ccgChannel">
+        </div>
+        <div class="form-row">
+            <label for="server">CasparCG Layer</label>
+            <input type="text" name="ccgLayer" id="ccgLayer">
+        </div>
+        <button type="submit">Speichern</button>
+        <p id="message"></p>
+    </form>
+    <script src="/index.js"></script>
+</body>
+
+</html>
