@@ -4,16 +4,38 @@ module.exports = class WebServer {
     getSettingsFunction = null;
     newSettingsCallback = null;
 
-    start() {
+    start(callback) {
+        if (this.app !== null) {
+            callback(true);
+            return;
+        }
+
+        const port = 3000;
         const express = require('express');
         const bodyParser = require('body-parser');
-        var app = this.app = express();
-        const port = 3000
-        app.use(bodyParser.urlencoded());
+        var app = express();
+        this.app = app;
+        app.use(bodyParser.urlencoded({extended: true}));
         app.use(express.static('http'));
-        app.listen(port);
+        app.listen(port).on('error', (err) => {
+            console.log('Port ' + port + ' is already in use!');
+            callback(false);
+        });
         this.registerApiCalls();
         this.registerSaveCall();
+        callback(true);
+    }
+
+    stop() {
+        this.app.close();
+        this.app = null;
+    }
+
+    reset() {
+        this.stop();
+        this.ipc = null;
+        this.getSettingsFunction = null;
+        this.newSettingsCallback = null;
     }
 
     registerApiCalls() {
@@ -63,7 +85,7 @@ module.exports = class WebServer {
     registerSaveCall() {
         this.app.post('/settings/save', (req, res) => {
             // Save new settings
-            var newSettings = {CasparCG: req.body};
+            var newSettings = { CasparCG: req.body };
             if (typeof this.newSettingsCallback == 'function') {
                 this.newSettingsCallback(newSettings);
             }

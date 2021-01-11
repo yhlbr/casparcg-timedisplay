@@ -18,23 +18,18 @@ var show_timeinterval = null;
 window.addEventListener('DOMContentLoaded', () => {
     // renderer process
     var ipcRenderer = require('electron').ipcRenderer;
-    ipcRenderer.on('timecodeVars', function (event, timecodeVars) {
-        console.log(timecodeVars.currentCountDown);
-        updateScreen(timecodeVars.currentProgressPrecent, timecodeVars.currentCountDown);
+    registerTimecodeHandler(ipcRenderer);
+    registerApiCallbacks(ipcRenderer);
+    registerMessageHandler(ipcRenderer);
+    ipcRenderer.on('update-settings', () => {
+        reloadSettings();
+    });
 
-        if (timecodeVars.currentCountDown < 0.1) {
-            setTimeout(function () {
-                updateScreen(0, "0");
-            }, 200);
-        }
-    })
     reloadSettings();
 
     document.getElementById('save').addEventListener('click', () => {
         saveInputs();
     });
-
-    registerApiCallbacks(ipcRenderer);
 });
 
 function updateScreen(progressPercent, countDownSeconds) {
@@ -86,9 +81,41 @@ function registerApiCallbacks(ipcRenderer) {
             show_timeinterval = null;
         }
     });
+    ipcRenderer.on('show-reset', () => {
+        document.querySelector('.time-show').innerText = '00:00:00';
+    });
 }
 
 function updateShowTime() {
     elapsedTime = (Date.now() - show_starttime) / 1000;
     document.querySelector('.time-show').innerText = elapsedTime.toString().toHHMMSS();
+}
+
+function registerTimecodeHandler(ipcRenderer) {
+    ipcRenderer.on('timecodeVars', function (event, timecodeVars) {
+        console.log(timecodeVars.currentCountDown);
+        updateScreen(timecodeVars.currentProgressPrecent, timecodeVars.currentCountDown);
+
+        if (timecodeVars.currentCountDown < 0.1) {
+            setTimeout(function () {
+                updateScreen(0, "0");
+            }, 200);
+        }
+    })
+}
+
+function registerMessageHandler(ipcRenderer) {
+    ipcRenderer.on('show-message', function (event, msg) {
+        showMessage(msg.message);
+    })
+}
+
+function showMessage(message) {
+    var el = document.querySelector('#message-display');
+    el.innerText = message;
+    el.style.display = 'block';
+    setTimeout(function() {
+        el.style.display = 'none';
+        el.innerText = '';
+    }, 4000);
 }

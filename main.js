@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, ipcRenderer } = require('electron')
 const path = require('path')
 const { autoUpdater } = require("electron-updater")
 const Store = require('electron-store');
@@ -55,6 +55,8 @@ function updateSettings(newSettings) {
                 break;
         }
     });
+
+    mainWindow.send('update-settings');
 }
 
 function createWindow() {
@@ -65,7 +67,9 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true
         },
-        fullscreen: !isDev
+        fullscreen: !isDev,
+        icon: __dirname + "img/icon.ico",
+        title: "CasparCG Time Display"
     })
     if (!isDev) mainWindow.setMenuBarVisibility(false)
 
@@ -91,13 +95,21 @@ app.whenReady().then(() => {
     });
 
     const webServer = new WebServer();
-    webServer.start();
-    webServer.registerIpc(mainWindow);
-    webServer.registerSettingsFunction(() => { return settings; });
-    webServer.registerNewSettingsCallback((newSettings) => {
-        updateSettings(newSettings);
-    })
-})
+    mainWindow.webContents.on('did-finish-load', () => {
+        webServer.start((success) => {
+            if (!success) {
+                mainWindow.send('show-message', {
+                    message: 'WebServer konnte nicht gestartet werden.'
+                });
+            }
+        });
+        webServer.registerIpc(mainWindow);
+        webServer.registerSettingsFunction(() => { return settings; });
+        webServer.registerNewSettingsCallback((newSettings) => {
+            updateSettings(newSettings);
+        });
+    });
+});
 
 app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
