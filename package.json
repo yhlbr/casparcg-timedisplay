@@ -1,6 +1,6 @@
 {
   "name": "casparcg-timedisplay",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "CasparCG Time Display",
   "main": "main.js",
   "scripts": {
