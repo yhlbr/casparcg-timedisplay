@@ -62,6 +62,7 @@ function createWindow() {
         },
         fullscreen: true
     })
+    if (!isDev) mainWindow.setMenuBarVisibility(false)
 
     mainWindow.loadFile('index.html')
 }
